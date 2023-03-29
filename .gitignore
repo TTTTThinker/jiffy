@@ -80,3 +80,4 @@ test-driver
 /Debug/
 target
 .vscode/
+*.conf

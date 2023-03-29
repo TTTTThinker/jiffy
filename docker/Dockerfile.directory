@@ -13,7 +13,7 @@ COPY . /opt/jiffy
 WORKDIR /opt/jiffy
 RUN mkdir build \
   && cd build \
-  && cmake -DBUILD_TESTS=OFF -DBUILD_JAVA_CLIENT=OFF .. \
+  && cmake -DBUILD_TESTS=OFF -DBUILD_STORAGE=OFF -DBUILD_CPP_CLIENT=OFF -DBUILD_JAVA_CLIENT=OFF -DBUILD_PYTHON_CLIENT=OFF -DBUILD_MEMKIND_SUPPORT=OFF .. \
   && make -j8 install
 
 ENTRYPOINT ["directoryd", "-c", "/opt/jiffy/docker/docker.conf"]
