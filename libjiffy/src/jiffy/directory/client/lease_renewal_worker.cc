@@ -1,5 +1,6 @@
 #include "lease_renewal_worker.h"
 #include "../../utils/logger.h"
+#include <pthread.h>
 
 namespace jiffy {
 namespace directory {
@@ -12,12 +13,19 @@ lease_renewal_worker::lease_renewal_worker(const std::string &host, int port)
 
 lease_renewal_worker::~lease_renewal_worker() {
   stop_.store(true);
+  pthread_cancel(worker_.native_handle());
   if (worker_.joinable())
     worker_.join();
 }
 
 void lease_renewal_worker::stop() {
   stop_.store(true);
+}
+
+void lease_renewal_worker::cancel() {
+  pthread_cancel(worker_.native_handle());
+  if (worker_.joinable())
+    worker_.join();
 }
 
 void lease_renewal_worker::start() {
