@@ -119,7 +119,15 @@ std::shared_ptr<storage::shared_log_client> jiffy_client::create_shared_log(cons
 std::shared_ptr<storage::file_client> jiffy_client::open_file(const std::string &path) {
   auto s = fs_->open(path);
   begin_scope(path);
-  return std::make_shared<storage::file_client>(fs_, path, s);
+  std::shared_ptr<storage::file_client> file_cli = std::make_shared<storage::file_client>(fs_, path, s);
+  try {
+    uint64_t file_size = std::stoul(s.get_tag("file_size"));
+    file_cli->set_last_offset_by_filesize(file_size);
+  }
+  catch (...) {
+    // do not set file size, ignore 
+  }
+  return file_cli;
 }
 
 std::shared_ptr<storage::shared_log_client> jiffy_client::open_shared_log(const std::string &path) {
@@ -243,6 +251,11 @@ void jiffy_client::load(const std::string &path, const std::string &dest) {
 
 void jiffy_client::close(const std::string &path) {
   end_scope(path);
+}
+
+void jiffy_client::set_file_size(const std::string &path, uint64_t file_size) {
+  std::map<std::string, std::string> tags = {{"file_size", std::to_string(file_size)}};
+  fs_->add_tags(path, tags);
 }
 
 }

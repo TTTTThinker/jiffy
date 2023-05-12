@@ -180,5 +180,14 @@ void file_client::handle_redirect(std::vector<std::string> &, const std::vector<
 
 }
 
+void file_client::set_last_offset_by_filesize(std::size_t file_size)
+{
+  last_offset_ = file_size % block_size_;
+}
+
+std::size_t file_client::get_file_size() {
+  return last_partition_ * block_size_ + last_offset_;
+}
+
 }
 }
