@@ -11,6 +11,7 @@
 #include <jiffy/directory/block/block_registration_server.h>
 #include <jiffy/utils/logger.h>
 #include <jiffy/directory/block/file_size_tracker.h>
+#include <jiffy/directory/block/block_usage_tracker.h>
 #include <boost/program_options.hpp>
 #include <jiffy/directory/fs/sync_worker.h>
 
@@ -45,6 +46,7 @@ int main(int argc, char **argv) {
   uint64_t lease_period_ms = 10000;
   uint64_t grace_period_ms = 10000;
   std::string storage_trace = "";
+  std::string block_trace = "block_trace.csv";
 
   try {
     namespace po = boost::program_options;
@@ -186,6 +188,12 @@ int main(int argc, char **argv) {
   if (!storage_trace.empty()) {
     LOG(log_level::info) << "Logging storage trace to " << storage_trace;
     tracker.start();
+  }
+
+  block_usage_tracker block_tracker(alloc, 1000, block_trace);
+  if (!block_trace.empty()) {
+    LOG(log_level::info) << "Logging block trace to " << block_trace;
+    block_tracker.start();
   }
 
   std::unique_lock<std::mutex> failure_condition_lock{failure_mtx};

@@ -25,6 +25,8 @@ if (BUILD_STORAGE OR BUILD_DIRECTORY)
           src/jiffy/directory/block/block_allocator.h
           src/jiffy/directory/block/file_size_tracker.cpp
           src/jiffy/directory/block/file_size_tracker.h
+          src/jiffy/directory/block/block_usage_tracker.cpp
+          src/jiffy/directory/block/block_usage_tracker.h
           src/jiffy/directory/block/random_block_allocator.cpp
           src/jiffy/directory/block/random_block_allocator.h
           src/jiffy/directory/client/directory_client.cpp
