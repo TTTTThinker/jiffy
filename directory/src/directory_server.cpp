@@ -46,7 +46,8 @@ int main(int argc, char **argv) {
   uint64_t lease_period_ms = 10000;
   uint64_t grace_period_ms = 10000;
   std::string storage_trace = "";
-  std::string block_trace = "block_trace.csv";
+  std::string block_trace = "";
+  uint64_t block_trace_period_ms = 1000;
 
   try {
     namespace po = boost::program_options;
@@ -69,7 +70,9 @@ int main(int argc, char **argv) {
         ("directory.lease_port", po::value<int>(&lease_port)->default_value(9091))
         ("directory.block_port", po::value<int>(&lease_port)->default_value(9092))
         ("directory.lease.lease_period_ms", po::value<uint64_t>(&lease_period_ms)->default_value(10000))
-        ("directory.lease.grace_period_ms", po::value<uint64_t>(&grace_period_ms)->default_value(10000));
+        ("directory.lease.grace_period_ms", po::value<uint64_t>(&grace_period_ms)->default_value(10000))
+        ("directory.block_trace", po::value<std::string>(&block_trace)->default_value(""))
+        ("directory.block_trace_period_ms", po::value<uint64_t>(&block_trace_period_ms)->default_value(1000));
 
     po::options_description cmdline_options, env_options;
     cmdline_options.add(generic).add(hidden);
@@ -190,7 +193,7 @@ int main(int argc, char **argv) {
     tracker.start();
   }
 
-  block_usage_tracker block_tracker(alloc, 1000, block_trace);
+  block_usage_tracker block_tracker(alloc, block_trace_period_ms, block_trace);
   if (!block_trace.empty()) {
     LOG(log_level::info) << "Logging block trace to " << block_trace;
     block_tracker.start();
