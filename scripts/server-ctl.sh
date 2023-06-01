@@ -23,9 +23,9 @@ elif [ "$CMD" == "stop" ]; then
         do
             servers="${servers} jiffy-${server}"
         done
-        docker stop $servers
+        docker stop -t 1 $servers
     elif [ "$SERVER" == "directory" ] || [ "$SERVER" == "storage" ]; then
-        docker stop jiffy-$SERVER
+        docker stop -t 1 jiffy-$SERVER
     else
         echo "Usage: server-ctl.sh [start | stop] [directory | storage | ALL]"
     fi
