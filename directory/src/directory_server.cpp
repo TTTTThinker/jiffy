@@ -183,10 +183,10 @@ int main(int argc, char **argv) {
 
   lease_expiry_worker lmgr(tree, lease_period_ms, grace_period_ms);
   lmgr.start();
-
+/*
   sync_worker syncer(tree, 1000);
   syncer.start();
-
+*/
   file_size_tracker tracker(tree, 1000, storage_trace);
   if (!storage_trace.empty()) {
     LOG(log_level::info) << "Logging storage trace to " << storage_trace;

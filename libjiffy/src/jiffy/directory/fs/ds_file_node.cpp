@@ -190,6 +190,7 @@ bool ds_file_node::handle_lease_expiry(std::vector<std::string> &cleared_blocks,
     using namespace utils;
     LOG(log_level::info) << "Clearing storage for " << name();
     if (dstatus_.is_mapped()) {
+    /*
       for (const auto &block: dstatus_.data_blocks()) {
         for (size_t i = 0; i < dstatus_.chain_length(); i++) {
           if (i == dstatus_.chain_length() - 1) {
@@ -204,6 +205,25 @@ bool ds_file_node::handle_lease_expiry(std::vector<std::string> &cleared_blocks,
         }
       }
       return false; // Clear the blocks, but don't delete the path
+    */
+      for (std::size_t chain_seq = 0; chain_seq < dstatus_.data_blocks().size(); chain_seq++) {
+        if (dstatus_.mode().at(chain_seq) != storage_mode::on_disk) {
+          const auto &block = dstatus_.data_blocks().at(chain_seq);
+          for (size_t i = 0; i < dstatus_.chain_length(); i++) {
+            if (i == dstatus_.chain_length() - 1) {
+              std::string block_backing_path = dstatus_.backing_path();
+              utils::directory_utils::push_path_element(block_backing_path, block.name);
+              storage->dump(block.tail(), block_backing_path);
+              dstatus_.mode(chain_seq, storage_mode::on_disk);
+            } else {
+              storage->destroy_partition(block.block_ids[i]);
+            }
+            cleared_blocks.push_back(block.block_ids[i]);
+          }
+        dstatus_.mark_dumped(chain_seq);
+        }
+      }
+      return false;
     } else {
       for (const auto &block: dstatus_.data_blocks()) {
         for (const auto &block_name: block.block_ids) {
