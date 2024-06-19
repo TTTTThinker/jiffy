@@ -220,7 +220,7 @@ bool ds_file_node::handle_lease_expiry(std::vector<std::string> &cleared_blocks,
             }
             cleared_blocks.push_back(block.block_ids[i]);
           }
-        dstatus_.mark_dumped(chain_seq);
+        // dstatus_.mark_dumped(chain_seq);
         }
       }
       return false;
